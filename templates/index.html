@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+ {% block head %}
+ {{ super() }}
+<style type="text/css">
+img {
+  animation-duration: 2s;
+  animation-name: slidein;
+}
+@keyframes slidein {
+  from {
+    width: 10%;
+  }
+
+  to {
+    width: 245px;
+  }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+ <form class=""  id="" method="POST" action="">
+     <div class="container mt-3" id="section_1" style="display:{{section_display}}">
+<h3>Twoje Pokemony: </h3>
+{%for pk, pv in user_pokemons_temp.items()%}
+      <div class="card m-1" style="display: inline-block; width:270px">
+        <div class="card-header">
+    <img src="static/{{pv['img']}}" style="{{style}}" class="rounded float-start shadow-sm ">
+  <div class="form-check">
+     <input class="form-check-input m-1" type="checkbox" id="{{pk}}" name="chose_my_pokemon" value="{{pk}}">
+    <label class="form-check-label text-center text-uppercase"><strong>{{pk}}</strong></label></div>
+          <ul class="list-group p-3">
+        <li class="list-group-item"><i class="material-icons" style="font-size:32px;color:red">whatshot</i> {{pv["hp"]}}</li>
+              <li class="list-group-item"><i class="material-icons" style="font-size:32px;color:red">trending_down</i>{{pv["attack_1"]}}</li>
+         <li class="list-group-item"><i class="material-icons" style="font-size:32px;color:red">trending_down</i>{{pv["attack_2"]}}</li>
+              </ul>
+</div></div>
+
+    {% endfor %}
+ </div>
+<hr>
+<div class="container mt-3" id="section_2" style="display:{{section_display}}">
+  <h3>Wybierz przeciwnika: </h3>
+    {%for pk, pv in pokemon_list.items()%}
+      <div class="card m-1" style="display: inline-block; width:290px">
+        <div class="card-header">
+    <img src="static/{{pv['img']}}" style="{{style}}" class="rounded float-start shadow-sm ">
+  <div class="form-check">
+     <input class="form-check-input m-1" type="checkbox" id="{{pk}}" name="chose_pokemon" value="{{pk}}">
+    <label class="form-check-label text-center text-uppercase"><strong>{{pk}}</strong></label></div>
+          <ul class="list-group p-3">
+        <li class="list-group-item"><i class="material-icons" style="font-size:32px;color:red">whatshot</i> {{pv["hp"]}}</li>
+              <li class="list-group-item"><i class="material-icons" style="font-size:32px;color:red">trending_down</i>{{pv["attack_1"]}}</li>
+         <li class="list-group-item"><i class="material-icons" style="font-size:32px;color:red">trending_down</i>{{pv["attack_2"]}}</li>
+              </ul>
+</div></div>
+
+    {% endfor %}
+</div>
+   <div class="row fixed-bottom"><input type="submit" class="btn btn-outline-primary" value="Wybierz" name="" /></div>
+         </form>
+{% endblock %}
+

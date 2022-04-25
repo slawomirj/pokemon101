@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block title %}Sklep - Pokemon101{% endblock %}
+{% block content %}
+
+<body>
+
+    <div class="container-fluid mt-3">
+
+
+    <h1 class="">Sklep Gry Pokemon101:</h1>
+        <div class="container mt-3">
+             <div class="row">
+  <div class="col">    <a href="{{ url_for('draw', username=username, status=status1) }}" class=""><img class="rounded mx-auto d-block" src="{{url_for('static', filename='assets/Paczuszka.jpg')}}" alt=""></a>
+    <p class="text-center">5 diamentów.</p></div>
+  <div class="col"><a href="{{ url_for('draw', username=username, status=status2) }}" style="pointer-events:none"><img class="rounded mx-auto d-block"src="{{url_for('static', filename='assets/Puszka.jpg')}}" alt=""></a>
+    <p class="text-center">50 diamentów.</p></div>
+
+  <div class="col" > <a href="{{ url_for('draw', username=username, status=status3) }}" class="btn bg-secondary" style="pointer-events:none"><img class="rounded mx-auto d-block" src="{{url_for('static', filename='assets/Diamonds_Pack[300].jpg')}}" alt=""></a>
+      <p class="text-center">700 doświadczenia lub 200 monet. </p>
+      <p class="text-center"> Dostępne niedługo</p></div>
+</div>
+        </div>
+    </div>
+
+
+    <!-- TODO: zrobic zeby nie wyswietlalo sie gdy odebrales nagrode -->
+    <!-- <div class="toast show">
+        <div class="toast-header">
+          Hit Tej Wiosny!
+          <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body">
+            <a href="" ><img src="Event1.jpg" alt=""></a><br>
+            <a href="" class="bnt bg-secondary"><h3>Odbierz nagrode!</h3></a>
+        </div>
+      </div> -->
+{% endblock %}

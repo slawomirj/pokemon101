@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block title %}Sklep - Pokemon101{% endblock %}
+
+{% block head %}
+  {{ super() }}
+<style>
+#anm {
+  animation: mymove 5s;
+}
+@keyframes mymove {
+  100% {transform: rotate(360deg);}
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="container-fluid mt-3">
+
+        <div class="container mt-3 ">
+  <form action="{{ url_for('draw', username=username, status=status) }}" method="POST">
+ {% if src == "/assets/pokquestion.jpg" %}
+      <div class="container-fluid mt-3">
+            <img class="rounded mx-auto d-block" src="{{url_for('static', filename=src)}}" alt="draw pokemon">
+      </div>
+      {% else %}
+      <div id="anm" class="container-fluid mt-3">
+ <img  class="rounded mx-auto d-block" src="{{url_for('static', filename=src)}}" alt="draw pokemon"></div>
+      {% endif %}
+      <div class="container mt-3 " style="display:{{draw_button}};">
+           <button type="submit" class="btn btn-primary mx-auto d-block" >Losuj</button>
+      </div>
+    </form>
+        </div>
+</div>
+<div class="row fixed-bottom" id="end_button" style="display:{{display_back_button}};">
+      <a class="btn btn-outline-primary" href="{{ url_for('index', username=username) }}"  style="width:100%">
+    Przejdź do strony głównej</a>
+      <a class="btn btn-outline-primary" href="{{ url_for('marketplace', username=username) }}"  style="width:100%">
+    Przejdź do sklepu</a>
+</div>
+</body>
+{% endblock %}
