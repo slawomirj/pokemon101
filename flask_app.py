@@ -1,16 +1,18 @@
-import sqlite3
-import time
 
+# A very simple Flask Hello World app for you to get started with...
+
+import sqlite3
 from flask import Flask, render_template, url_for, request, redirect
-import random
 from sql_support import PSQL, pokemon_xls
 
-
-app: Flask = Flask(__name__)
-
+app = Flask(__name__)
 
 @app.route("/", methods=['GET', 'POST'])
 def login():
+    PSQL().create_user()
+    PSQL().create_pok_list()
+    PSQL().db_create_pokemon_db()
+    PSQL().add_pok()
     if request.method == 'POST':
         if len(request.form['username']) > 0 and len(request.form['pswd']) > 0:
             username = request.form['username']
@@ -149,5 +151,6 @@ def add_pokemon():
     return render_template("add_pokemon.html")
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
+
+
