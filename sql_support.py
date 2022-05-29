@@ -24,7 +24,6 @@ def pokemon_xls():
     return pok_dict
 
 
-
 def random_int(r):
     ri = random.randint(0, r)
     return ri
@@ -34,6 +33,13 @@ class PSQL():
     def __init__(self):
         self.db = sqlite3.connect("data.db")
         self.cursor = self.db.cursor()
+
+    def db_initial(self):
+        PSQL().create_user()
+        PSQL().create_pok_list()
+        PSQL().db_create_pokemon_db()
+        PSQL().add_pok()
+        PSQL().create_all_pokemons()
 
     def check_user(self, user1, e_mail, password):
         self.cursor.execute("CREATE TABLE IF NOT EXISTS user( "
@@ -140,23 +146,11 @@ class PSQL():
             print(row)
 
     def draw_cards(self, stat, username):
-        self.cursor.execute("CREATE TABLE IF NOT EXISTS pok_list( "
-                            "pok_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                            "name TEXT UNIQUE,"
-                            "hp INT,"
-                            "attack_1 TEXT,"
-                            "damage_1 INT,"
-                            "attack_2 TEXT,"
-                            "damage_2 INT,"
-                            "ultra_beast TEXT,"
-                            "stage TEXT,"
-                            "img TEXT,"
-                            "type TEXT)""")
         if stat == "5diam" or stat == "new_player":
             self.cursor.execute("SELECT name FROM pok_list WHERE stage='Basic'")
             all_rows = self.cursor.fetchall()
-            rr = random_int(len(all_rows))
-            self.cursor.execute("SELECT img FROM pok_list WHERE name='" + all_rows[rr][0] + "'")
+            draw_pokemon_basic = random_int(len(all_rows))
+            self.cursor.execute("SELECT img FROM pok_list WHERE name='" + all_rows[draw_pokemon_basic][0] + "'")
             pok_img = self.cursor.fetchone()
             if stat == "5diam":
                 self.cursor.execute("SELECT diamond FROM user WHERE user_name='" + username + "'")
@@ -167,9 +161,26 @@ class PSQL():
                     "UPDATE user SET diamond='" + str(int(diamonds[0]) - 5) + "' WHERE user_name='" + str(
                         username) + "'")
             self.db.commit()
-            PSQL().add_pokemon_for_user(username, all_rows[rr][0])
-            print(rr)
+            PSQL().add_pokemon_for_user(username, all_rows[draw_pokemon_basic][0])
             return pok_img[0]
+        elif stat == "10diam":
+            self.cursor.execute("SELECT name FROM pok_list WHERE stage='Stage0'")
+            all_rows = self.cursor.fetchall()
+            draw_pokemon_stage_0 = random_int(len(all_rows))
+            self.cursor.execute("SELECT img FROM pok_list WHERE name='" + all_rows[draw_pokemon_stage_0][0] + "'")
+            pok_img = self.cursor.fetchone()
+            if stat == "10diam":
+                self.cursor.execute("SELECT diamond FROM user WHERE user_name='" + username + "'")
+                diamonds = self.cursor.fetchone()
+                if diamonds[0] < 10:
+                    return "not_enough_diamonds_5"
+                self.cursor.execute(
+                    "UPDATE user SET diamond='" + str(int(diamonds[0]) - 10) + "' WHERE user_name='" + str(
+                        username) + "'")
+                self.db.commit()
+            PSQL().add_pokemon_for_user(username, all_rows[draw_pokemon_stage_0][0])
+            return pok_img[0]
+
 
 
     def db_create_pokemon_db(self):
@@ -177,7 +188,6 @@ class PSQL():
                             "pokemon1 TEXT,"
                             "pokemon2 TEXT,"
                             "game_status TEXT)""")
-
 
     def create_user(self):
         self.cursor.execute("CREATE TABLE IF NOT EXISTS user( "
@@ -192,7 +202,6 @@ class PSQL():
                             "coin INT DEFAULT 0,"
                             "diamond INT DEFAULT 0)""")
 
-
     def create_pok_list(self):
         self.cursor.execute("CREATE TABLE IF NOT EXISTS pok_list( "
                             "pok_id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -206,16 +215,35 @@ class PSQL():
                             "stage TEXT,"
                             "img TEXT,"
                             "type TEXT)""")
+
     def add_pok(self):
         pok_dict = pokemon_xls()
         for p in pok_dict.values():
             try:
                 self.cursor.execute(
-                "INSERT INTO pok_list(name, hp, attack_1, damage_1, attack_2, damage_2, ultra_beast, "
-                "stage, img, type "")VALUES(?,?,?,?,?,?,?,?,?,?)",
-                (p["name"], p["hp"], p["attack_1"], p["damage_1"], p["attack_2"], p["damage_2"],
-                    p["ultra_beast"], p["stage"], p["img"], "0"))
+                    "INSERT INTO pok_list(name, hp, attack_1, damage_1, attack_2, damage_2, ultra_beast, "
+                    "stage, img, type "")VALUES(?,?,?,?,?,?,?,?,?,?)",
+                    (p["name"], p["hp"], p["attack_1"], p["damage_1"], p["attack_2"], p["damage_2"],
+                     p["ultra_beast"], p["stage"], p["img"], "0"))
                 self.db.commit()
             except sqlite3.IntegrityError:
                 pass
+
+    def create_all_pokemons(self):
+        self.cursor.execute("CREATE TABLE IF NOT EXISTS all_pokemons( "
+                            "pokemons_id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                            "pokemon_name TEXT,"
+                            "user_name TEXT,"
+                            "user_id INT,"
+                            "FOREIGN KEY(user_id) REFERENCES user(user_id))""")
+
+    """ -- zmiana parametrów gracza do testów --"""
+    def add_diamonds(self, amount_of_diamonds, username):
+        self.cursor.execute(
+            "UPDATE user SET diamond='" + str(amount_of_diamonds) + "' WHERE user_name='" + str(username) + "'")
+        self.db.commit()
+
+if __name__ == '__main__':
+    PSQL().add_diamonds(120, "Toster")
+
 

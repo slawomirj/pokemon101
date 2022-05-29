@@ -9,10 +9,7 @@ app = Flask(__name__)
 
 @app.route("/", methods=['GET', 'POST'])
 def login():
-    PSQL().create_user()
-    PSQL().create_pok_list()
-    PSQL().db_create_pokemon_db()
-    PSQL().add_pok()
+    PSQL().db_initial()
     if request.method == 'POST':
         if len(request.form['username']) > 0 and len(request.form['pswd']) > 0:
             username = request.form['username']
@@ -35,6 +32,7 @@ def login():
 
 @app.route("/sign_up", methods=['GET', 'POST'])
 def sign_up():
+    # TODO: logowanie z prawdziwego zdarzenia
     message = "Pola z gwiazdkami są wymagane"
     if request.method == 'POST':
         username = request.form['username']
@@ -49,7 +47,6 @@ def sign_up():
                 return render_template('login_in.html')
         else:
             message = "Hasła nie są identyczne"
-        # TODO: powrót do strony logowania
     return render_template("sign_up.html", message=message)
 
 
@@ -73,9 +70,8 @@ def index(username):
             message = "Wybrałeś za dużo przeciwników"
         elif len(pokemon_chose_my_list) == 1 and len(pokemon_chose_list) == 1:
             PSQL().db_add_choose_pokemon(pokemon_chose_my_list[0], pokemon_chose_list[0], "comp")
-            # return redirect(url_for('fight'))
+
             return redirect(url_for('fight', username=username))
-    # TODO: TUTAJ JEST BLAD
     user_pokemons = PSQL().show_pokemons(username)
     for my_pokemons in user_pokemons:
         user_pokemons_temp[my_pokemons[1]] = pokemon_list[my_pokemons[1]]
@@ -112,7 +108,7 @@ def marketplace(username):
     user_data = PSQL().show_user(username)
     message = "Diamenty: " + str(user_data[0][9]) + ", Monety: " + str(user_data[0][8])
     status1 = "5diam"
-    status2 = "50diam"
+    status2 = "10diam"
     status3 = "700xp"
     return render_template("marketplace.html", user_data=user_data, username=username, status1=status1, status2=status2,
                            status3=status3, message=message)
@@ -133,6 +129,8 @@ def draw(username, status):
             message = "Twój nowy Pokemon"
         elif status == "5diam":
             draw = PSQL().draw_cards("5diam", username)
+        elif status == "10diam":
+            draw = PSQL().draw_cards("10diam", username)
         if draw == "not_enough_diamonds_5":
             message= "Masz za mało diamentów"
         else:
@@ -151,6 +149,8 @@ def add_pokemon():
     return render_template("add_pokemon.html")
 
 
+if __name__ == "__main__":
+    app.run(debug=True)
 
 
 
